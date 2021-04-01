@@ -7,16 +7,16 @@ import jdk.jfr.DataAmount;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Ingredient {
     private int ingredientId;
-    private int recipeId;
+    private Recipe recipe;
     private String ingredient;
 
-    public Ingredient(int ingredientId, int recipeId, String ingredient) {
-        this.ingredientId = ingredientId;
-        this.recipeId = recipeId;
-        this.ingredient = ingredient;
+     public Ingredient() {
     }
 
-    public Ingredient() {
+    public Ingredient(int ingredientId, Recipe recipe, String ingredient) {
+        this.ingredientId = ingredientId;
+        this.recipe = recipe;
+        this.ingredient = ingredient;
     }
 
     public int getIngredientId() {
@@ -27,13 +27,14 @@ public class Ingredient {
         this.ingredientId = ingredientId;
     }
 
-    public int getRecipeId() {
-        return recipeId;
+    public Recipe getRecipe() {
+        return recipe;
     }
 
-    public void setRecipeId(int recipeId) {
-        this.recipeId = recipeId;
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
     }
+
 
     public String getIngredient() {
         return ingredient;
