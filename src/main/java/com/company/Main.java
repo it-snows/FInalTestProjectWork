@@ -8,13 +8,10 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws SQLException {
 
-//        var dl = new DataLibrary();
-//        var recipes = dl.load();
-//        for(Recipe recipe : recipes){
-//            System.out.println(recipe);
-//        }
-
         var dm = new DatabaseManager();
-        dm.loadCSV();
+//        dm.loadCSVRecipes();
+
+ dm.loadCSVIngredients();
+
     }
 }
