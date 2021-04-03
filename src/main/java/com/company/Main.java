@@ -9,9 +9,9 @@ public class Main {
     public static void main(String[] args) throws SQLException {
 
         var dm = new DatabaseManager();
-//        dm.loadCSVRecipes();
 
- dm.loadCSVIngredients();
+        System.out.println();
+// dm.loadRecipes();
 
-    }
+
 }

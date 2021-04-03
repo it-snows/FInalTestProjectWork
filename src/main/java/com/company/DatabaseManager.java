@@ -5,6 +5,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,38 +36,54 @@ public class DatabaseManager {
         return recipes;
     }
 
-    public void loadCSVRecipes() throws SQLException {
+    public void loadIngredients(List<Integer> ids) throws SQLException, IOException {
         var con = getConnection();
-
         var recipes = readRecipe();
-        String sqlStatement = "INSERT INTO recipes (recipe_title, course, total_time, number_of_servings," +
-                "instructions, picture_link) values (?, ?, ?, ?, ?, ?)";
+        String sqlStatement = "INSERT INTO ingredients (recipe_id, ingredients) values (?, ?)";
         PreparedStatement statement = con.prepareStatement(sqlStatement);
 
+        Path path = Paths.get(FILE_PATH);
+        var lines = Files.readAllLines(path);
         for (Recipe recipe : recipes) {
-            statement.setString(1, recipe.getTitle());
-            statement.setString(2, recipe.getCourse());
-            statement.setInt(3, recipe.getTotalTime());
-            statement.setInt(4, recipe.getNumberOfServings());
-            statement.setString(5, recipe.getInstructions());
-            statement.setString(6, recipe.getPictureLink());
-            statement.executeUpdate();
+            for (int i = 1; i < lines.size(); i++) {
+                Integer recipeId = ids.get(i - 1);
+                statement.setInt(1, recipe.getRecipeId());
+            }
+                statement.setString(2, Arrays.toString(recipe.getIngredients()));
+                statement.executeUpdate();
+            }
         }
+
+
+    public List<Integer> getRecipeIdFromDB() {             //needed for recipe_id
+        List<Integer> ids = new ArrayList<>();
+        try {
+            Connection con = getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("select recipe_id from recipes");
+            while (rs.next()) {
+                Integer id = rs.getInt("recipe_id");
+                ids.add(id);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return ids;
     }
 
-    public void loadCSVIngredients() throws SQLException {
-        var con = getConnection();
-
-        var ingredients = readRecipe();
-        String sqlStatement = "INSERT INTO ingredients (recipe_id, ingredient) values (?,?)";
-        PreparedStatement statement = con.prepareStatement(sqlStatement);
-
-        for (Recipe ingredient : ingredients) {
-            statement.setInt(1, ingredient.getRecipeId());
-            statement.setString(2, Arrays.toString(ingredient.getIngredients()));
-            statement.executeUpdate();
-        }
-    }
+//    public void loadIngredients() throws SQLException {
+//        var con = getConnection();
+//
+//        var ingredients = readRecipe();
+//        String sqlStatement = "INSERT INTO ingredients (recipe_id, ingredient) values (?,?)";
+//        PreparedStatement statement = con.prepareStatement(sqlStatement);
+//
+//        for (Recipe ingredient : ingredients) {
+//            statement.setInt(1, ingredient.getRecipeId());
+//            statement.setString(2, Arrays.toString(ingredient.getIngredients()));
+//            statement.executeUpdate();
+//        }
+//    }
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(connectionUrl, "test", "test123");
